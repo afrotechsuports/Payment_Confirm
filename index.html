@@ -13,6 +13,8 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            justify-content: center; /* Center vertically */
+            align-items: center; /* Center horizontally */
             overflow-x: hidden;
         }
         header {
@@ -22,28 +24,26 @@
             width: 100%;
             background: linear-gradient(90deg, #2c3e50, #4a6076);
             color: white;
-            padding: 15px 0;
+            padding: 10px 0; /* Reduced for phone-friendliness */
             text-align: center;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
             z-index: 10;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             border-bottom: 2px solid rgba(255, 255, 255, 0.1);
         }
         header h2 {
             margin: 0;
-            font-size: 24px;
+            font-size: 20px; /* Adjusted for phones */
             font-weight: 600;
             letter-spacing: 1px;
         }
         .container {
-            max-width: 337px;
-            margin: 60px auto 15px;
+            width: 90%; /* More flexible width */
+            max-width: 337px; /* Kept for consistency */
+            margin: 60px 0 15px; /* Adjusted margin */
             padding: 15px;
             background: white;
-            border-radius: 11px;
-            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 15px; /* Slightly larger for friendliness */
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
             animation: fadeIn 0.5s ease-in;
         }
         h1 {
@@ -57,14 +57,15 @@
             margin-bottom: 15px;
             font-weight: 600;
             color: #2c3e50;
+            font-size: 14px;
         }
         .order-id span {
             display: block;
-            font-size: 12px;
+            font-size: 10px;
             color: #7f8c8d;
         }
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 12px; /* Slightly reduced */
         }
         label {
             display: block;
@@ -75,7 +76,7 @@
         }
         input[type="text"], input[type="email"], select, input[type="tel"] {
             width: 100%;
-            padding: 9px;
+            padding: 8px; /* Slightly reduced for compactness */
             border: 1px solid #ddd;
             border-radius: 6px;
             box-sizing: border-box;
@@ -91,14 +92,14 @@
             gap: 8px;
         }
         .phone-group select {
-            width: 30%;
+            width: 35%; /* Slightly wider for usability */
         }
         .phone-group input {
-            width: 70%;
+            width: 65%;
         }
         .bank-details {
             background: #f9f9f9;
-            padding: 11px;
+            padding: 10px;
             margin-top: 8px;
             border-radius: 6px;
             border: 1px solid #eee;
@@ -122,7 +123,7 @@
         }
         .upload-btn {
             width: 100%;
-            padding: 9px;
+            padding: 10px;
             background: #27ae60;
             color: white;
             border: none;
@@ -130,7 +131,7 @@
             cursor: pointer;
             font-size: 12px;
             transition: transform 0.2s, background 0.3s;
-            margin-top: 8px;
+            margin-top: 10px;
         }
         .upload-btn:hover {
             background: #219653;
@@ -143,27 +144,37 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.8);
             z-index: 20;
             justify-content: center;
             align-items: center;
             animation: fadeIn 0.5s ease;
         }
         .overlay-content {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
+            background: linear-gradient(135deg, #ffffff, #e8f1ff);
+            padding: 25px;
+            border-radius: 15px;
             text-align: center;
-            max-width: 300px;
+            max-width: 320px;
             width: 90%;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.3);
+            position: relative;
+            animation: popIn 0.5s ease;
+        }
+        .overlay-content.success {
+            border: 2px solid #27ae60;
+        }
+        .overlay-content p {
+            margin: 10px 0;
+            font-size: 14px;
+            color: #2c3e50;
         }
         .loading-bar {
             width: 100%;
-            height: 5px;
+            height: 6px;
             background: #ddd;
-            margin-top: 10px;
-            position: relative;
+            margin-top: 15px;
+            border-radius: 3px;
             overflow: hidden;
         }
         .loading-bar::after {
@@ -171,25 +182,37 @@
             position: absolute;
             top: 0;
             left: 0;
-            width: 50%;
+            width: 60%;
             height: 100%;
-            background: #27ae60;
+            background: linear-gradient(90deg, #27ae60, #2ecc71);
             animation: load 2s infinite ease-in-out;
         }
-        @keyframes load {
-            0% { transform: translateX(-100%); }
-            50% { transform: translateX(200%); }
-            100% { transform: translateX(200%); }
+        .download-btn {
+            padding: 8px 15px;
+            background: #e67e22;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-top: 15px;
+            transition: background 0.3s, transform 0.2s;
+        }
+        .download-btn:hover {
+            background: #d35400;
+            transform: scale(1.05);
         }
         footer {
             margin-top: auto;
-            padding: 15px;
+            padding: 10px;
             text-align: center;
             background: #fff;
             border-top: 1px solid #ddd;
-            border-radius: 0 0 11px 11px;
+            border-radius: 0 0 15px 15px;
             box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
             font-size: 12px;
+            width: 90%;
+            max-width: 337px;
         }
         footer a {
             color: #e67e22;
@@ -206,19 +229,26 @@
             from { transform: translateY(10px); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
         }
+        @keyframes popIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        @keyframes load {
+            0% { transform: translateX(-100%); }
+            50% { transform: translateX(200%); }
+            100% { transform: translateX(200%); }
+        }
         @media (max-width: 600px) {
             header {
-                padding: 10px 0;
+                padding: 8px 0;
             }
             header h2 {
-                font-size: 18px;
+                font-size: 16px;
             }
-            .container {
-                margin: 50px 8px 8px;
-                border-radius: 8px;
-            }
-            footer {
-                border-radius: 0;
+            .container, footer {
+                width: 95%;
+                margin: 50px 0 10px;
+                padding: 12px;
             }
         }
     </style>
@@ -291,6 +321,7 @@
     </footer>
 
     <script src="countryCodes.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script>
         let currentAccountNo = '';
 
@@ -356,7 +387,8 @@
             const countryCode = form.countryCode.value;
             const phone = form.phone.value;
             const screenshot = form.screenshot.files[0];
-            const bank = form.bank.value;
+            const bank = form.bank.options[form.bank.selectedIndex].text;
+            const orderId = document.getElementById('orderId').innerText.split('\n')[0]; // Get Order ID without country name
 
             if (fullname && email && countryCode && phone && bank) {
                 const overlay = document.getElementById('overlay');
@@ -368,20 +400,32 @@
 
                 // Simulate 5-second delay, then show confirmation
                 setTimeout(() => {
-                    let confirmationMessage = `Payment confirmation received!<br>Full Name: ${fullname}<br>Email: ${email}<br>Phone: ${countryCode}${phone}<br>Bank: ${form.bank.options[form.bank.selectedIndex].text}`;
+                    let confirmationMessage = `<p><strong>Order ID: ${orderId}</strong></p><p>Payment Confirmed! 🎉</p><p>Full Name: ${fullname}</p><p>Email: ${email}</p><p>Phone: ${countryCode}${phone}</p><p>Bank: ${bank}</p>`;
                     if (screenshot) {
-                        confirmationMessage += '<br>Screenshot selected (not uploaded in this static version).';
+                        confirmationMessage += '<p>Screenshot selected (not uploaded in this static version).</p>';
                     }
+                    confirmationMessage += '<button class="download-btn" onclick="downloadAsPNG()">Download as PNG 📥</button>';
                     overlayContent.innerHTML = confirmationMessage;
+                    overlayContent.classList.add('success'); // Add success styling
                 }, 5000);
             } else {
-                const messageDiv = document.getElementById('overlay');
-                messageDiv.style.display = 'flex';
-                messageDiv.innerHTML = '<div class="overlay-content"><p>Please fill in all fields and select a bank. ⚠️</p></div>';
+                const overlay = document.getElementById('overlay');
+                overlay.style.display = 'flex';
+                overlay.innerHTML = '<div class="overlay-content"><p>Please fill in all fields and select a bank. ⚠️</p></div>';
                 setTimeout(() => {
-                    messageDiv.style.display = 'none';
+                    overlay.style.display = 'none';
                 }, 3000);
             }
+        }
+
+        function downloadAsPNG() {
+            const overlayContent = document.getElementById('overlayContent');
+            html2canvas(overlayContent).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'payment-confirmation.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
         }
     </script>
 </body>
