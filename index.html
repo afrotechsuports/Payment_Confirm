@@ -1,1 +1,175 @@
-//logo
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirm Your Payment</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"], input[type="email"], input[type="tel"] {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .bank-option {
+            background-color: #fff;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .copy-btn {
+            padding: 5px 10px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .copy-btn:hover {
+            background-color: #2980b9;
+        }
+        .upload-btn, .support-btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-align: center;
+        }
+        .upload-btn:hover {
+            background-color: #219653;
+        }
+        .support-btn {
+            background-color: #e67e22;
+        }
+        .support-btn:hover {
+            background-color: #d35400;
+        }
+        .message {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 4px;
+            background-color: #ecf0f1;
+            display: none; /* Hidden by default */
+        }
+    </style>
+</head>
+<body>
+    <h1>Confirm Your Payment 💸</h1>
+
+    <form id="paymentForm" onsubmit="handleSubmit(event)">
+        <div class="form-group">
+            <label for="fullname">Your Full Name 👤</label>
+            <input type="text" id="fullname" name="fullname" placeholder="Enter your full name" required>
+        </div>
+
+        <div class="form-group">
+            <label for="email">Your Email 📧</label>
+            <input type="email" id="email" name="email" placeholder="Enter your email" required>
+        </div>
+
+        <div class="form-group">
+            <label for="phone">Phone Number 📞</label>
+            <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" required>
+        </div>
+
+        <h3>Bank Details 🏦</h3>
+        <div class="bank-option">
+            <div>
+                <strong>Commercial Bank of Ethiopia</strong><br>
+                Name: Asefa Mezgebu<br>
+                Account No: 100023033324
+            </div>
+            <button type="button" class="copy-btn" onclick="copyToClipboard('100023033324')">Copy 📋</button>
+        </div>
+
+        <div class="bank-option">
+            <div>
+                <strong>Bank of Abyssinia</strong><br>
+                Name: Asefa Mezgebu<br>
+                Account No: 96332933
+            </div>
+            <button type="button" class="copy-btn" onclick="copyToClipboard('96332933')">Copy 📋</button>
+        </div>
+
+        <div class="bank-option">
+            <div>
+                <strong>Zemen Bank</strong><br>
+                Name: Asefa Mezgebu<br>
+                Account No: 12044302209
+            </div>
+            <button type="button" class="copy-btn" onclick="copyToClipboard('12044302209')">Copy 📋</button>
+        </div>
+
+        <div class="form-group">
+            <label for="screenshot">Upload Screenshot 📸</label>
+            <input type="file" id="screenshot" name="screenshot" accept="image/*">
+        </div>
+
+        <button type="submit" class="upload-btn">Submit Confirmation ✅</button>
+    </form>
+
+    <button class="support-btn" onclick="alert('Contact us at support@example.com or call +251-XXX-XXX-XXXX')">Customer Support ☎️</button>
+
+    <div id="message" class="message"></div>
+
+    <script>
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Account number copied to clipboard! ✅');
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+            });
+        }
+
+        function handleSubmit(event) {
+            event.preventDefault();
+            const form = document.getElementById('paymentForm');
+            const fullname = form.fullname.value;
+            const email = form.email.value;
+            const phone = form.phone.value;
+            const screenshot = form.screenshot.files[0];
+
+            const messageDiv = document.getElementById('message');
+            if (fullname && email && phone) {
+                messageDiv.style.display = 'block';
+                messageDiv.innerHTML = `Payment confirmation received!<br>Full Name: ${fullname}<br>Email: ${email}<br>Phone: ${phone}`;
+                if (screenshot) {
+                    messageDiv.innerHTML += '<br>Screenshot selected (not uploaded in this static version).';
+                }
+            } else {
+                messageDiv.style.display = 'block';
+                messageDiv.innerHTML = 'Please fill in all fields. ⚠️';
+            }
+        }
+    </script>
+</body>
+</html>
