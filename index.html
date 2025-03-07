@@ -54,6 +54,13 @@
             outline: 2px solid #0f0;
         }
 
+        /* File Upload */
+        input[type="file"] {
+            border: 1px solid #0f0;
+            padding: 8px;
+            cursor: pointer;
+        }
+
         /* Button */
         button {
             width: 100%;
@@ -125,7 +132,7 @@
 
     <div class="container">
         <h2>Payment Submission</h2>
-        <form id="paymentForm" action="https://api.web3forms.com/submit" method="POST">
+        <form id="paymentForm" action="https://api.web3forms.com/submit" method="POST" enctype="multipart/form-data">
             <!-- Web3Forms Access Key -->
             <input type="hidden" name="access_key" value="998ae39c-ae50-4b7d-b9ee-75691d5193b9">
             <input type="hidden" name="message" value="Payment Submission">
@@ -161,6 +168,10 @@
                 <option value="Chase Bank">Chase Bank</option>
                 <option value="HSBC">HSBC</option>
             </select>
+
+            <!-- File Upload -->
+            <label for="receipt">Upload Payment Receipt:</label>
+            <input type="file" id="receipt" name="receipt" accept="image/*,application/pdf" required>
 
             <button type="submit">Submit Payment</button>
         </form>
