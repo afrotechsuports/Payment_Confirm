@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Payment Submission Form</title>
+    <title>AI Hashtag Generator</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -12,6 +12,7 @@
             background: #121212;
             color: #fff;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             height: 100vh;
@@ -22,15 +23,16 @@
             padding: 25px;
             border-radius: 10px;
             box-shadow: 0 0 20px rgba(0, 255, 128, 0.2);
-            width: 350px;
+            width: 400px;
             text-align: center;
         }
 
-        h2 { color: #0f0; margin-bottom: 15px; }
+        h2 {
+            color: #0f0;
+            margin-bottom: 15px;
+        }
 
-        label { display: block; margin-top: 12px; font-size: 14px; }
-
-        input, select {
+        input {
             width: 100%;
             padding: 10px;
             margin-top: 5px;
@@ -38,11 +40,12 @@
             border-radius: 5px;
             background: #2a2a2a;
             color: #fff;
+            text-align: center;
         }
 
-        input:focus, select:focus { outline: 2px solid #0f0; }
-
-        input[type="file"] { border: 1px solid #0f0; padding: 8px; cursor: pointer; }
+        input:focus {
+            outline: 2px solid #0f0;
+        }
 
         button {
             width: 100%;
@@ -57,67 +60,86 @@
             transition: 0.3s;
         }
 
-        button:hover { background: #00cc66; }
+        button:hover {
+            background: #00cc66;
+        }
 
-        .phone-group { display: flex; gap: 5px; }
+        #hashtags {
+            margin-top: 15px;
+            padding: 10px;
+            background: #2a2a2a;
+            border-radius: 5px;
+            display: none;
+        }
 
-        .phone-group select { width: 35%; }
-
-        .phone-group input { width: 65%; }
+        .loading {
+            margin-top: 10px;
+            display: none;
+            font-size: 14px;
+            color: #0f0;
+        }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h2>Payment Submission</h2>
-        <form id="paymentForm">
-            <label>Order ID:</label>
-            <p id="orderId">#ORD<span id="randomId"></span></p>
+        <h2>AI Hashtag Generator</h2>
+        <input type="text" id="keyword" placeholder="Enter a topic..." required>
+        <button onclick="generateHashtags()">Generate Hashtags</button>
 
-            <label for="name">Full Name:</label>
-            <input type="text" id="name" name="name" required>
+        <p class="loading" id="loading">Generating hashtags...</p>
 
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required>
-
-            <label for="phone">Phone Number:</label>
-            <div class="phone-group">
-                <select id="country_code" name="country_code" required></select>
-                <input type="tel" id="phone" name="phone" required>
-            </div>
-
-            <label for="bank">Select Bank:</label>
-            <select id="bank" name="bank" required>
-                <option value="">-- Choose Bank --</option>
-                <option value="Bank of America">Bank of America</option>
-                <option value="Chase Bank">Chase Bank</option>
-                <option value="HSBC">HSBC</option>
-            </select>
-
-            <label for="receipt">Upload Payment Receipt:</label>
-            <input type="file" id="receipt" name="receipt" accept="image/*,application/pdf" required>
-
-            <button type="submit">Submit Payment</button>
-        </form>
+        <div id="hashtags"></div>
+        <button id="copyButton" style="display: none;" onclick="copyHashtags()">Copy Hashtags</button>
     </div>
 
-    <script src="countryCodes.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const countryCodeSelect = document.getElementById('country_code');
+        async function generateHashtags() {
+            const keyword = document.getElementById('keyword').value.trim();
+            const hashtagsDiv = document.getElementById('hashtags');
+            const copyButton = document.getElementById('copyButton');
+            const loading = document.getElementById('loading');
 
-            // Check if countryCodes.js is loaded
-            if (typeof countryCodes !== 'undefined' && Array.isArray(countryCodes)) {
-                countryCodes.forEach(code => {
-                    const option = document.createElement('option');
-                    option.value = code.dial_code;
-                    option.textContent = `${code.dial_code} (${code.name})`;
-                    countryCodeSelect.appendChild(option);
-                });
-            } else {
-                console.error("countryCodes.js not loaded or invalid format");
+            if (!keyword) {
+                alert("Please enter a topic!");
+                return;
             }
-        });
+
+            hashtagsDiv.style.display = "none";
+            copyButton.style.display = "none";
+            loading.style.display = "block";
+
+            try {
+                const response = await fetch('/generate-hashtags', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ keyword })
+                });
+
+                const data = await response.json();
+
+                if (data.hashtags) {
+                    hashtagsDiv.innerText = data.hashtags;
+                    hashtagsDiv.style.display = "block";
+                    copyButton.style.display = "block";
+                } else {
+                    hashtagsDiv.innerText = "Error generating hashtags.";
+                    hashtagsDiv.style.display = "block";
+                }
+            } catch (error) {
+                hashtagsDiv.innerText = "Failed to fetch hashtags.";
+                hashtagsDiv.style.display = "block";
+            }
+
+            loading.style.display = "none";
+        }
+
+        function copyHashtags() {
+            const hashtagsText = document.getElementById('hashtags').innerText;
+            navigator.clipboard.writeText(hashtagsText).then(() => {
+                alert("Hashtags copied to clipboard!");
+            });
+        }
     </script>
 
 </body>
