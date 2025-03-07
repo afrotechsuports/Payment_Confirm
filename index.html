@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"> <!-- Disable zoom -->
     <title>Confirm Your Payment</title>
     <style>
         body {
@@ -16,6 +16,11 @@
             justify-content: center;
             align-items: center;
             overflow-x: hidden;
+            -webkit-user-select: none; /* Disable text selection/zoom */
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none; /* Disable iOS callouts */
+            touch-action: manipulation; /* Prevent double-tap zoom */
         }
         header {
             position: fixed;
@@ -59,10 +64,26 @@
             color: #2c3e50;
             font-size: 14px;
         }
-        .order-id span {
-            display: block;
-            font-size: 10px;
-            color: #7f8c8d;
+        .country-display {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 5px;
+            font-size: 12px;
+            color: #27ae60; /* Green color */
+        }
+        .active-dot {
+            width: 8px;
+            height: 8px;
+            background: #27ae60;
+            border-radius: 50%;
+            margin-right: 5px;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
         }
         .form-group {
             margin-bottom: 12px;
@@ -171,21 +192,28 @@
         }
         .loading-bar {
             width: 100%;
-            height: 6px;
+            height: 8px;
             background: #ddd;
             margin-top: 15px;
-            border-radius: 3px;
+            border-radius: 4px;
             overflow: hidden;
+            position: relative;
         }
         .loading-bar::after {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
-            width: 60%;
+            width: 70%;
             height: 100%;
-            background: linear-gradient(90deg, #27ae60, #2ecc71);
-            animation: load 2s infinite ease-in-out;
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #45b7d1);
+            animation: coolLoad 2.5s infinite ease-in-out;
+            box-shadow: 0 0 10px rgba(255, 107, 107, 0.8);
+        }
+        @keyframes coolLoad {
+            0% { transform: translateX(-100%); }
+            50% { transform: translateX(150%); opacity: 0.8; }
+            100% { transform: translateX(150%); opacity: 0; }
         }
         .download-btn {
             padding: 8px 15px;
@@ -233,11 +261,6 @@
             from { transform: scale(0.8); opacity: 0; }
             to { transform: scale(1); opacity: 1; }
         }
-        @keyframes load {
-            0% { transform: translateX(-100%); }
-            50% { transform: translateX(200%); }
-            100% { transform: translateX(200%); }
-        }
         @media (max-width: 600px) {
             header {
                 padding: 8px 0;
@@ -260,8 +283,11 @@
 
     <div class="container">
         <h1>Confirm Your Payment 💸</h1>
+        <div class="country-display" id="countryDisplay">
+            <span class="active-dot"></span><span id="countryName"></span>
+        </div>
         <div class="order-id" id="orderId">
-            #KU3933<span id="countryInfo"></span>
+            #KU3933
         </div>
 
         <form id="paymentForm" onsubmit="handleSubmit(event)">
@@ -325,17 +351,26 @@
     <script>
         let currentAccountNo = '';
 
+        // Modified countryCodes with short codes (example subset, extend in countryCodes.js)
+        const countryShortCodes = {
+            '+1': 'USA',
+            '+251': 'ETH',
+            '+44': 'GBR',
+            '+91': 'IND',
+            '+86': 'CHN',
+            // Add more mappings as needed in your countryCodes.js
+        };
+
         // Populate country codes and detect location
         document.addEventListener('DOMContentLoaded', () => {
             const countryCodeSelect = document.getElementById('countryCode');
             countryCodes.forEach(code => {
                 const option = document.createElement('option');
                 option.value = code.code;
-                option.text = `${code.name} (${code.code})`;
+                option.text = `${code.name} (${countryShortCodes[code.code] || code.code})`;
                 countryCodeSelect.appendChild(option);
             });
 
-            // Ask for location permission
             if (navigator.geolocation) {
                 if (confirm('Allow this page to access your location to pre-select your country code?')) {
                     navigator.geolocation.getCurrentPosition(
@@ -345,33 +380,35 @@
                                 .then(data => {
                                     const countryCode = countryCodes.find(code => code.name === data.countryName)?.code || '+251';
                                     countryCodeSelect.value = countryCode;
-                                    updateOrderId(); // Update Order ID after setting country code
+                                    updateOrderId();
                                 })
                                 .catch(() => {
-                                    countryCodeSelect.value = '+251'; // Fallback
+                                    countryCodeSelect.value = '+251';
                                     updateOrderId();
                                 });
                         },
                         () => {
-                            countryCodeSelect.value = '+251'; // Fallback on denial/error
+                            countryCodeSelect.value = '+251';
                             updateOrderId();
                         }
                     );
                 } else {
-                    countryCodeSelect.value = '+251'; // Default if permission denied
+                    countryCodeSelect.value = '+251';
                     updateOrderId();
                 }
             } else {
-                countryCodeSelect.value = '+251'; // Default if geolocation not supported
+                countryCodeSelect.value = '+251';
                 updateOrderId();
             }
         });
 
         function updateOrderId() {
             const countryCode = document.getElementById('countryCode').value;
+            const shortCode = countryShortCodes[countryCode] || countryCode;
             const selectedOption = document.getElementById('countryCode').selectedOptions[0].text;
             const countryName = selectedOption.split(' (')[0];
-            document.getElementById('orderId').innerHTML = `#KU3933${countryCode}<span id="countryInfo">${countryName}</span>`;
+            document.getElementById('orderId').innerHTML = `#KU3933${shortCode}`;
+            document.getElementById('countryName').innerText = countryName;
         }
 
         function displayBankDetails(bank) {
@@ -415,10 +452,11 @@
             const fullname = form.fullname.value;
             const email = form.email.value;
             const countryCode = form.countryCode.value;
+            const shortCode = countryShortCodes[countryCode] || countryCode;
             const phone = form.phone.value;
             const screenshot = form.screenshot.files[0];
             const bank = form.bank.options[form.bank.selectedIndex].text;
-            const orderId = document.getElementById('orderId').innerText.split('\n')[0];
+            const orderId = document.getElementById('orderId').innerText;
 
             if (fullname && email && countryCode && phone && bank) {
                 const overlay = document.getElementById('overlay');
@@ -428,7 +466,7 @@
                 overlayContent.innerHTML = '<p>Waiting for submission...</p><div class="loading-bar"></div>';
 
                 setTimeout(() => {
-                    let confirmationMessage = `<p><strong>Order ID: ${orderId}</strong></p><p>Payment Confirmed! 🎉</p><p>Full Name: ${fullname}</p><p>Email: ${email}</p><p>Phone: ${countryCode}${phone}</p><p>Bank: ${bank}</p>`;
+                    let confirmationMessage = `<p><strong>Order ID: ${orderId}</strong></p><p>Payment Confirmed! 🎉</p><p>Full Name: ${fullname}</p><p>Email: ${email}</p><p>Phone: ${shortCode}${phone}</p><p>Bank: ${bank}</p>`;
                     if (screenshot) {
                         confirmationMessage += '<p>Screenshot selected (not uploaded in this static version).</p>';
                     }
