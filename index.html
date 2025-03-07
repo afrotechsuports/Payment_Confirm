@@ -38,7 +38,7 @@
             letter-spacing: 1px;
         }
         .container {
-            max-width: 337px; /* Reduced further from 450px (25% decrease again: 450 * 0.75) */
+            max-width: 337px;
             margin: 60px auto 15px;
             padding: 15px;
             background: white;
@@ -231,7 +231,7 @@
             </div>
 
             <button type="submit" class="upload-btn">Submit Confirmation ✅</button>
-            <button type="button" class="autofill-btn" onclick="autofillForm()">Autofill ✨</button>
+            <button type="button" class="autofill-btn" onclick="requestAutofill()">Autofill ✨</button>
         </form>
 
         <div id="message" class="message"></div>
@@ -254,7 +254,6 @@
                 option.text = `${code.name} (${code.code})`;
                 countryCodeSelect.appendChild(option);
             });
-            autofillForm(); // Auto-run autofill on page load
         });
 
         function displayBankDetails(bank) {
@@ -315,15 +314,23 @@
             }
         }
 
+        function requestAutofill() {
+            if (confirm('Allow access to your device location to autofill your information?')) {
+                autofillForm();
+            } else {
+                alert('Autofill cancelled. Please enter your details manually.');
+            }
+        }
+
         function autofillForm() {
             const form = document.getElementById('paymentForm');
-            
-            // Simulate real data (limited in static HTML)
-            const sampleName = 'User'; // Could use navigator.userAgent for device hint, but not reliable
-            const sampleEmail = `${navigator.platform.toLowerCase()}@example.com`; // Platform-based email
-            const samplePhone = '123456789'; // Random placeholder
-            
-            // Attempt to infer country code using Geolocation API
+
+            // Placeholder data since real device data isn't fully accessible
+            const sampleName = localStorage.getItem('userName') || 'User'; // Could use stored data
+            const sampleEmail = localStorage.getItem('userEmail') || `${navigator.platform.toLowerCase()}@example.com`;
+            const samplePhone = localStorage.getItem('userPhone') || '123456789';
+
+            // Use Geolocation to infer country code
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
                     (position) => {
@@ -332,25 +339,31 @@
                             .then(data => {
                                 const countryCode = countryCodes.find(code => code.name === data.countryName)?.code || '+251';
                                 form.countryCode.value = countryCode;
+                                form.fullname.value = sampleName;
+                                form.email.value = sampleEmail;
+                                form.phone.value = samplePhone;
+                                // Bank selection remains unchanged
                             })
                             .catch(() => {
-                                form.countryCode.value = '+251'; // Fallback
+                                form.countryCode.value = '+251';
+                                form.fullname.value = sampleName;
+                                form.email.value = sampleEmail;
+                                form.phone.value = samplePhone;
                             });
                     },
                     () => {
-                        form.countryCode.value = '+251'; // Fallback on error
+                        form.countryCode.value = '+251';
+                        form.fullname.value = sampleName;
+                        form.email.value = sampleEmail;
+                        form.phone.value = samplePhone;
                     }
                 );
             } else {
-                form.countryCode.value = '+251'; // Fallback if Geolocation not supported
+                form.countryCode.value = '+251';
+                form.fullname.value = sampleName;
+                form.email.value = sampleEmail;
+                form.phone.value = samplePhone;
             }
-
-            // Fill with sample data
-            form.fullname.value = sampleName;
-            form.email.value = sampleEmail;
-            form.phone.value = samplePhone;
-            form.bank.value = 'cbe';
-            displayBankDetails('cbe');
         }
     </script>
 </body>
