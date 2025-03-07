@@ -6,98 +6,161 @@
     <title>Confirm Your Payment</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f9f9f9;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #e0eafc, #cfdef3);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            overflow-x: hidden;
         }
         header {
-            background-color: #2c3e50;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            max-width: 600px;
+            background: linear-gradient(90deg, #2c3e50, #4a6076);
             color: white;
-            padding: 10px;
+            padding: 15px;
             text-align: center;
-            border-radius: 4px 4px 0 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            z-index: 10;
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 80px auto 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.5s ease-in;
         }
         h1 {
-            margin: 0;
             color: #2c3e50;
             text-align: center;
+            margin: 0 0 20px;
         }
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
         label {
             display: block;
             margin-bottom: 5px;
-            font-weight: bold;
+            font-weight: 600;
+            color: #34495e;
         }
-        input[type="text"], input[type="email"], input[type="tel"], select {
+        input[type="text"], input[type="email"], select, input[type="tel"] {
             width: 100%;
-            padding: 8px;
-            box-sizing: border-box;
+            padding: 12px;
             border: 1px solid #ddd;
-            border-radius: 4px;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        input:focus, select:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+        .phone-group {
+            display: flex;
+            gap: 10px;
+        }
+        .phone-group select {
+            width: 30%;
+        }
+        .phone-group input {
+            width: 70%;
         }
         .bank-details {
-            background-color: #fff;
-            padding: 10px;
+            background: #f9f9f9;
+            padding: 15px;
             margin-top: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            display: none; /* Hidden until a bank is selected */
+            border-radius: 8px;
+            border: 1px solid #eee;
+            display: none;
+            animation: slideIn 0.3s ease;
         }
         .copy-btn {
-            padding: 5px 10px;
-            background-color: #3498db;
+            padding: 8px 15px;
+            background: #3498db;
             color: white;
             border: none;
-            border-radius: 4px;
+            border-radius: 8px;
             cursor: pointer;
+            transition: transform 0.2s, background 0.3s;
         }
         .copy-btn:hover {
-            background-color: #2980b9;
+            background: #2980b9;
+            transform: scale(1.05);
         }
         .upload-btn {
-            display: block;
             width: 100%;
-            padding: 10px;
-            margin-top: 10px;
-            background-color: #27ae60;
+            padding: 12px;
+            background: #27ae60;
             color: white;
             border: none;
-            border-radius: 4px;
+            border-radius: 8px;
             cursor: pointer;
-            text-align: center;
+            font-size: 16px;
+            transition: transform 0.2s, background 0.3s;
         }
         .upload-btn:hover {
-            background-color: #219653;
+            background: #219653;
+            transform: scale(1.02);
         }
         .message {
             margin-top: 20px;
-            padding: 10px;
-            border-radius: 4px;
-            background-color: #ecf0f1;
-            display: none; /* Hidden by default */
+            padding: 15px;
+            border-radius: 8px;
+            background: #ecf0f1;
+            display: none;
+            animation: fadeIn 0.5s ease;
         }
         footer {
             margin-top: auto;
-            padding: 10px;
+            padding: 20px;
             text-align: center;
+            background: #fff;
+            border-top: 1px solid #ddd;
+            border-radius: 0 0 15px 15px;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
         }
         .support-btn {
             padding: 10px 20px;
-            background-color: #e67e22;
+            background: #e67e22;
             color: white;
             border: none;
-            border-radius: 4px;
+            border-radius: 8px;
             cursor: pointer;
+            transition: transform 0.2s, background 0.3s;
         }
         .support-btn:hover {
-            background-color: #d35400;
+            background: #d35400;
+            transform: scale(1.05);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideIn {
+            from { transform: translateY(10px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        @media (max-width: 600px) {
+            .container {
+                margin: 70px 10px 10px;
+                border-radius: 10px;
+            }
+            header {
+                border-radius: 0;
+            }
+            footer {
+                border-radius: 0;
+            }
         }
     </style>
 </head>
@@ -106,60 +169,76 @@
         <h2>Payment Confirmation Portal 🏦</h2>
     </header>
 
-    <h1>Confirm Your Payment 💸</h1>
+    <div class="container">
+        <h1>Confirm Your Payment 💸</h1>
 
-    <form id="paymentForm" onsubmit="handleSubmit(event)">
-        <div class="form-group">
-            <label for="fullname">Your Full Name 👤</label>
-            <input type="text" id="fullname" name="fullname" placeholder="Enter your full name" required>
-        </div>
+        <form id="paymentForm" onsubmit="handleSubmit(event)">
+            <div class="form-group">
+                <label for="fullname">Your Full Name 👤</label>
+                <input type="text" id="fullname" name="fullname" placeholder="Enter your full name" required>
+            </div>
 
-        <div class="form-group">
-            <label for="email">Your Email 📧</label>
-            <input type="email" id="email" name="email" placeholder="Enter your email" required>
-        </div>
+            <div class="form-group">
+                <label for="email">Your Email 📧</label>
+                <input type="email" id="email" name="email" placeholder="Enter your email" required>
+            </div>
 
-        <div class="form-group">
-            <label for="phone">Phone Number 📞</label>
-            <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" required>
-        </div>
+            <div class="form-group">
+                <label for="phone">Phone Number 📞</label>
+                <div class="phone-group">
+                    <select id="countryCode" name="countryCode" required></select>
+                    <input type="tel" id="phone" name="phone" placeholder="Enter your number" required>
+                </div>
+            </div>
 
-        <div class="form-group">
-            <label for="bank">Choose Bank 🏦</label>
-            <select id="bank" name="bank" onchange="displayBankDetails(this.value)">
-                <option value="">Select a bank</option>
-                <option value="cbe">Commercial Bank of Ethiopia</option>
-                <option value="boa">Bank of Abyssinia</option>
-                <option value="zemen">Zemen Bank</option>
-            </select>
-        </div>
+            <div class="form-group">
+                <label for="bank">Choose Bank 🏦</label>
+                <select id="bank" name="bank" onchange="displayBankDetails(this.value)" required>
+                    <option value="">Select a bank</option>
+                    <option value="cbe">Commercial Bank of Ethiopia</option>
+                    <option value="boa">Bank of Abyssinia</option>
+                    <option value="zemen">Zemen Bank</option>
+                </select>
+            </div>
 
-        <div id="bankDetails" class="bank-details">
-            <div id="bankInfo"></div>
-            <button type="button" class="copy-btn" id="copyBtn" onclick="copyToClipboard()">Copy 📋</button>
-        </div>
+            <div id="bankDetails" class="bank-details">
+                <div id="bankInfo"></div>
+                <button type="button" class="copy-btn" id="copyBtn" onclick="copyToClipboard()">Copy 📋</button>
+            </div>
 
-        <div class="form-group">
-            <label for="screenshot">Upload Screenshot 📸</label>
-            <input type="file" id="screenshot" name="screenshot" accept="image/*">
-        </div>
+            <div class="form-group">
+                <label for="screenshot">Upload Screenshot 📸</label>
+                <input type="file" id="screenshot" name="screenshot" accept="image/*">
+            </div>
 
-        <button type="submit" class="upload-btn">Submit Confirmation ✅</button>
-    </form>
+            <button type="submit" class="upload-btn">Submit Confirmation ✅</button>
+        </form>
 
-    <div id="message" class="message"></div>
+        <div id="message" class="message"></div>
+    </div>
 
     <footer>
         <button class="support-btn" onclick="alert('Contact us at support@example.com or call +251-XXX-XXX-XXXX')">Customer Support ☎️</button>
     </footer>
 
+    <script src="countryCodes.js"></script>
     <script>
         let currentAccountNo = '';
+
+        // Populate country codes
+        document.addEventListener('DOMContentLoaded', () => {
+            const countryCodeSelect = document.getElementById('countryCode');
+            countryCodes.forEach(code => {
+                const option = document.createElement('option');
+                option.value = code.code;
+                option.text = `${code.name} (${code.code})`;
+                countryCodeSelect.appendChild(option);
+            });
+        });
 
         function displayBankDetails(bank) {
             const bankDetails = document.getElementById('bankDetails');
             const bankInfo = document.getElementById('bankInfo');
-            const copyBtn = document.getElementById('copyBtn');
 
             if (bank === '') {
                 bankDetails.style.display = 'none';
@@ -197,14 +276,15 @@
             const form = document.getElementById('paymentForm');
             const fullname = form.fullname.value;
             const email = form.email.value;
+            const countryCode = form.countryCode.value;
             const phone = form.phone.value;
             const screenshot = form.screenshot.files[0];
             const bank = form.bank.value;
 
             const messageDiv = document.getElementById('message');
-            if (fullname && email && phone && bank) {
+            if (fullname && email && countryCode && phone && bank) {
                 messageDiv.style.display = 'block';
-                messageDiv.innerHTML = `Payment confirmation received!<br>Full Name: ${fullname}<br>Email: ${email}<br>Phone: ${phone}<br>Bank: ${form.bank.options[form.bank.selectedIndex].text}`;
+                messageDiv.innerHTML = `Payment confirmation received!<br>Full Name: ${fullname}<br>Email: ${email}<br>Phone: ${countryCode}${phone}<br>Bank: ${form.bank.options[form.bank.selectedIndex].text}`;
                 if (screenshot) {
                     messageDiv.innerHTML += '<br>Screenshot selected (not uploaded in this static version).';
                 }
