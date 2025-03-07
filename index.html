@@ -8,13 +8,24 @@
         body {
             font-family: Arial, sans-serif;
             max-width: 600px;
-            margin: 20px auto;
+            margin: 0 auto;
             padding: 20px;
             background-color: #f9f9f9;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            border-radius: 4px 4px 0 0;
         }
         h1 {
-            text-align: center;
+            margin: 0;
             color: #2c3e50;
+            text-align: center;
         }
         .form-group {
             margin-bottom: 15px;
@@ -24,22 +35,20 @@
             margin-bottom: 5px;
             font-weight: bold;
         }
-        input[type="text"], input[type="email"], input[type="tel"] {
+        input[type="text"], input[type="email"], input[type="tel"], select {
             width: 100%;
             padding: 8px;
             box-sizing: border-box;
             border: 1px solid #ddd;
             border-radius: 4px;
         }
-        .bank-option {
+        .bank-details {
             background-color: #fff;
             padding: 10px;
-            margin-bottom: 10px;
+            margin-top: 10px;
             border: 1px solid #ddd;
             border-radius: 4px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            display: none; /* Hidden until a bank is selected */
         }
         .copy-btn {
             padding: 5px 10px;
@@ -52,7 +61,7 @@
         .copy-btn:hover {
             background-color: #2980b9;
         }
-        .upload-btn, .support-btn {
+        .upload-btn {
             display: block;
             width: 100%;
             padding: 10px;
@@ -67,12 +76,6 @@
         .upload-btn:hover {
             background-color: #219653;
         }
-        .support-btn {
-            background-color: #e67e22;
-        }
-        .support-btn:hover {
-            background-color: #d35400;
-        }
         .message {
             margin-top: 20px;
             padding: 10px;
@@ -80,9 +83,29 @@
             background-color: #ecf0f1;
             display: none; /* Hidden by default */
         }
+        footer {
+            margin-top: auto;
+            padding: 10px;
+            text-align: center;
+        }
+        .support-btn {
+            padding: 10px 20px;
+            background-color: #e67e22;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .support-btn:hover {
+            background-color: #d35400;
+        }
     </style>
 </head>
 <body>
+    <header>
+        <h2>Payment Confirmation Portal 🏦</h2>
+    </header>
+
     <h1>Confirm Your Payment 💸</h1>
 
     <form id="paymentForm" onsubmit="handleSubmit(event)">
@@ -101,32 +124,19 @@
             <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" required>
         </div>
 
-        <h3>Bank Details 🏦</h3>
-        <div class="bank-option">
-            <div>
-                <strong>Commercial Bank of Ethiopia</strong><br>
-                Name: Asefa Mezgebu<br>
-                Account No: 100023033324
-            </div>
-            <button type="button" class="copy-btn" onclick="copyToClipboard('100023033324')">Copy 📋</button>
+        <div class="form-group">
+            <label for="bank">Choose Bank 🏦</label>
+            <select id="bank" name="bank" onchange="displayBankDetails(this.value)">
+                <option value="">Select a bank</option>
+                <option value="cbe">Commercial Bank of Ethiopia</option>
+                <option value="boa">Bank of Abyssinia</option>
+                <option value="zemen">Zemen Bank</option>
+            </select>
         </div>
 
-        <div class="bank-option">
-            <div>
-                <strong>Bank of Abyssinia</strong><br>
-                Name: Asefa Mezgebu<br>
-                Account No: 96332933
-            </div>
-            <button type="button" class="copy-btn" onclick="copyToClipboard('96332933')">Copy 📋</button>
-        </div>
-
-        <div class="bank-option">
-            <div>
-                <strong>Zemen Bank</strong><br>
-                Name: Asefa Mezgebu<br>
-                Account No: 12044302209
-            </div>
-            <button type="button" class="copy-btn" onclick="copyToClipboard('12044302209')">Copy 📋</button>
+        <div id="bankDetails" class="bank-details">
+            <div id="bankInfo"></div>
+            <button type="button" class="copy-btn" id="copyBtn" onclick="copyToClipboard()">Copy 📋</button>
         </div>
 
         <div class="form-group">
@@ -137,17 +147,49 @@
         <button type="submit" class="upload-btn">Submit Confirmation ✅</button>
     </form>
 
-    <button class="support-btn" onclick="alert('Contact us at support@example.com or call +251-XXX-XXX-XXXX')">Customer Support ☎️</button>
-
     <div id="message" class="message"></div>
 
+    <footer>
+        <button class="support-btn" onclick="alert('Contact us at support@example.com or call +251-XXX-XXX-XXXX')">Customer Support ☎️</button>
+    </footer>
+
     <script>
-        function copyToClipboard(text) {
-            navigator.clipboard.writeText(text).then(() => {
-                alert('Account number copied to clipboard! ✅');
-            }).catch(err => {
-                console.error('Failed to copy: ', err);
-            });
+        let currentAccountNo = '';
+
+        function displayBankDetails(bank) {
+            const bankDetails = document.getElementById('bankDetails');
+            const bankInfo = document.getElementById('bankInfo');
+            const copyBtn = document.getElementById('copyBtn');
+
+            if (bank === '') {
+                bankDetails.style.display = 'none';
+                return;
+            }
+
+            bankDetails.style.display = 'flex';
+            bankDetails.style.justifyContent = 'space-between';
+            bankDetails.style.alignItems = 'center';
+
+            if (bank === 'cbe') {
+                bankInfo.innerHTML = '<strong>Commercial Bank of Ethiopia</strong><br>Name: Asefa Mezgebu<br>Account No: 100023033324';
+                currentAccountNo = '100023033324';
+            } else if (bank === 'boa') {
+                bankInfo.innerHTML = '<strong>Bank of Abyssinia</strong><br>Name: Asefa Mezgebu<br>Account No: 96332933';
+                currentAccountNo = '96332933';
+            } else if (bank === 'zemen') {
+                bankInfo.innerHTML = '<strong>Zemen Bank</strong><br>Name: Asefa Mezgebu<br>Account No: 12044302209';
+                currentAccountNo = '12044302209';
+            }
+        }
+
+        function copyToClipboard() {
+            if (currentAccountNo) {
+                navigator.clipboard.writeText(currentAccountNo).then(() => {
+                    alert('Account number copied to clipboard! ✅');
+                }).catch(err => {
+                    console.error('Failed to copy: ', err);
+                });
+            }
         }
 
         function handleSubmit(event) {
@@ -157,17 +199,18 @@
             const email = form.email.value;
             const phone = form.phone.value;
             const screenshot = form.screenshot.files[0];
+            const bank = form.bank.value;
 
             const messageDiv = document.getElementById('message');
-            if (fullname && email && phone) {
+            if (fullname && email && phone && bank) {
                 messageDiv.style.display = 'block';
-                messageDiv.innerHTML = `Payment confirmation received!<br>Full Name: ${fullname}<br>Email: ${email}<br>Phone: ${phone}`;
+                messageDiv.innerHTML = `Payment confirmation received!<br>Full Name: ${fullname}<br>Email: ${email}<br>Phone: ${phone}<br>Bank: ${form.bank.options[form.bank.selectedIndex].text}`;
                 if (screenshot) {
                     messageDiv.innerHTML += '<br>Screenshot selected (not uploaded in this static version).';
                 }
             } else {
                 messageDiv.style.display = 'block';
-                messageDiv.innerHTML = 'Please fill in all fields. ⚠️';
+                messageDiv.innerHTML = 'Please fill in all fields and select a bank. ⚠️';
             }
         }
     </script>
