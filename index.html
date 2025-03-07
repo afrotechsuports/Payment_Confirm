@@ -38,37 +38,37 @@
             letter-spacing: 1px;
         }
         .container {
-            max-width: 450px; /* 25% decrease from 600px */
-            margin: 60px auto 15px; /* Adjusted proportionally */
-            padding: 15px; /* 25% decrease from 20px */
+            max-width: 337px; /* Reduced further from 450px (25% decrease again: 450 * 0.75) */
+            margin: 60px auto 15px;
+            padding: 15px;
             background: white;
-            border-radius: 11px; /* 25% decrease from 15px */
-            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1); /* Adjusted */
+            border-radius: 11px;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
             animation: fadeIn 0.5s ease-in;
         }
         h1 {
             color: #2c3e50;
             text-align: center;
-            margin: 0 0 15px; /* 25% decrease from 20px */
-            font-size: 18px; /* Adjusted proportionally */
+            margin: 0 0 15px;
+            font-size: 18px;
         }
         .form-group {
-            margin-bottom: 15px; /* 25% decrease from 20px */
+            margin-bottom: 15px;
         }
         label {
             display: block;
-            margin-bottom: 4px; /* 25% decrease from 5px */
+            margin-bottom: 4px;
             font-weight: 600;
             color: #34495e;
-            font-size: 12px; /* Adjusted */
+            font-size: 12px;
         }
         input[type="text"], input[type="email"], select, input[type="tel"] {
             width: 100%;
-            padding: 9px; /* 25% decrease from 12px */
+            padding: 9px;
             border: 1px solid #ddd;
-            border-radius: 6px; /* 25% decrease from 8px */
+            border-radius: 6px;
             box-sizing: border-box;
-            font-size: 12px; /* 25% decrease from 16px */
+            font-size: 12px;
             transition: border-color 0.3s;
         }
         input:focus, select:focus {
@@ -77,7 +77,7 @@
         }
         .phone-group {
             display: flex;
-            gap: 8px; /* 25% decrease from 10px */
+            gap: 8px;
         }
         .phone-group select {
             width: 30%;
@@ -87,8 +87,8 @@
         }
         .bank-details {
             background: #f9f9f9;
-            padding: 11px; /* 25% decrease from 15px */
-            margin-top: 8px; /* 25% decrease from 10px */
+            padding: 11px;
+            margin-top: 8px;
             border-radius: 6px;
             border: 1px solid #eee;
             display: none;
@@ -96,7 +96,7 @@
             font-size: 12px;
         }
         .copy-btn {
-            padding: 6px 11px; /* 25% decrease from 8px 15px */
+            padding: 6px 11px;
             background: #3498db;
             color: white;
             border: none;
@@ -111,15 +111,15 @@
         }
         .upload-btn, .autofill-btn {
             width: 100%;
-            padding: 9px; /* 25% decrease from 12px */
+            padding: 9px;
             background: #27ae60;
             color: white;
             border: none;
             border-radius: 6px;
             cursor: pointer;
-            font-size: 12px; /* 25% decrease from 16px */
+            font-size: 12px;
             transition: transform 0.2s, background 0.3s;
-            margin-top: 8px; /* 25% decrease from 10px */
+            margin-top: 8px;
         }
         .autofill-btn {
             background: #8e44ad;
@@ -133,8 +133,8 @@
             transform: scale(1.02);
         }
         .message {
-            margin-top: 15px; /* 25% decrease from 20px */
-            padding: 11px; /* 25% decrease from 15px */
+            margin-top: 15px;
+            padding: 11px;
             border-radius: 6px;
             background: #ecf0f1;
             display: none;
@@ -143,7 +143,7 @@
         }
         footer {
             margin-top: auto;
-            padding: 15px; /* 25% decrease from 20px */
+            padding: 15px;
             text-align: center;
             background: #fff;
             border-top: 1px solid #ddd;
@@ -168,13 +168,13 @@
         }
         @media (max-width: 600px) {
             header {
-                padding: 10px 0; /* Smaller padding on mobile */
+                padding: 10px 0;
             }
             header h2 {
-                font-size: 18px; /* Smaller font on mobile */
+                font-size: 18px;
             }
             .container {
-                margin: 50px 8px 8px; /* Adjusted for smaller header */
+                margin: 50px 8px 8px;
                 border-radius: 8px;
             }
             footer {
@@ -254,6 +254,7 @@
                 option.text = `${code.name} (${code.code})`;
                 countryCodeSelect.appendChild(option);
             });
+            autofillForm(); // Auto-run autofill on page load
         });
 
         function displayBankDetails(bank) {
@@ -316,10 +317,38 @@
 
         function autofillForm() {
             const form = document.getElementById('paymentForm');
-            form.fullname.value = 'John Doe';
-            form.email.value = 'john.doe@example.com';
-            form.countryCode.value = '+251';
-            form.phone.value = '912345678';
+            
+            // Simulate real data (limited in static HTML)
+            const sampleName = 'User'; // Could use navigator.userAgent for device hint, but not reliable
+            const sampleEmail = `${navigator.platform.toLowerCase()}@example.com`; // Platform-based email
+            const samplePhone = '123456789'; // Random placeholder
+            
+            // Attempt to infer country code using Geolocation API
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${position.coords.latitude}&longitude=${position.coords.longitude}&localityLanguage=en`)
+                            .then(response => response.json())
+                            .then(data => {
+                                const countryCode = countryCodes.find(code => code.name === data.countryName)?.code || '+251';
+                                form.countryCode.value = countryCode;
+                            })
+                            .catch(() => {
+                                form.countryCode.value = '+251'; // Fallback
+                            });
+                    },
+                    () => {
+                        form.countryCode.value = '+251'; // Fallback on error
+                    }
+                );
+            } else {
+                form.countryCode.value = '+251'; // Fallback if Geolocation not supported
+            }
+
+            // Fill with sample data
+            form.fullname.value = sampleName;
+            form.email.value = sampleEmail;
+            form.phone.value = samplePhone;
             form.bank.value = 'cbe';
             displayBankDetails('cbe');
         }
