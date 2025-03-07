@@ -52,6 +52,17 @@
             margin: 0 0 15px;
             font-size: 18px;
         }
+        .order-id {
+            text-align: center;
+            margin-bottom: 15px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        .order-id span {
+            display: block;
+            font-size: 12px;
+            color: #7f8c8d;
+        }
         .form-group {
             margin-bottom: 15px;
         }
@@ -109,7 +120,7 @@
             background: #2980b9;
             transform: scale(1.05);
         }
-        .upload-btn, .autofill-btn {
+        .upload-btn {
             width: 100%;
             padding: 9px;
             background: #27ae60;
@@ -121,25 +132,54 @@
             transition: transform 0.2s, background 0.3s;
             margin-top: 8px;
         }
-        .autofill-btn {
-            background: #8e44ad;
-        }
         .upload-btn:hover {
             background: #219653;
             transform: scale(1.02);
         }
-        .autofill-btn:hover {
-            background: #732d91;
-            transform: scale(1.02);
-        }
-        .message {
-            margin-top: 15px;
-            padding: 11px;
-            border-radius: 6px;
-            background: #ecf0f1;
+        .overlay {
             display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 20;
+            justify-content: center;
+            align-items: center;
             animation: fadeIn 0.5s ease;
-            font-size: 12px;
+        }
+        .overlay-content {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 300px;
+            width: 90%;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+        .loading-bar {
+            width: 100%;
+            height: 5px;
+            background: #ddd;
+            margin-top: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+        .loading-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 50%;
+            height: 100%;
+            background: #27ae60;
+            animation: load 2s infinite ease-in-out;
+        }
+        @keyframes load {
+            0% { transform: translateX(-100%); }
+            50% { transform: translateX(200%); }
+            100% { transform: translateX(200%); }
         }
         footer {
             margin-top: auto;
@@ -190,6 +230,9 @@
 
     <div class="container">
         <h1>Confirm Your Payment 💸</h1>
+        <div class="order-id" id="orderId">
+            #KU3933<span id="countryInfo"></span>
+        </div>
 
         <form id="paymentForm" onsubmit="handleSubmit(event)">
             <div class="form-group">
@@ -205,7 +248,9 @@
             <div class="form-group">
                 <label for="phone">Phone Number 📞</label>
                 <div class="phone-group">
-                    <select id="countryCode" name="countryCode" required></select>
+                    <select id="countryCode" name="countryCode" onchange="updateOrderId()" required>
+                        <!-- Populated by JS -->
+                    </select>
                     <input type="tel" id="phone" name="phone" placeholder="Enter your number" required>
                 </div>
             </div>
@@ -231,10 +276,14 @@
             </div>
 
             <button type="submit" class="upload-btn">Submit Confirmation ✅</button>
-            <button type="button" class="autofill-btn" onclick="requestAutofill()">Autofill ✨</button>
         </form>
+    </div>
 
-        <div id="message" class="message"></div>
+    <div id="overlay" class="overlay">
+        <div class="overlay-content" id="overlayContent">
+            <p>Waiting for submission...</p>
+            <div class="loading-bar"></div>
+        </div>
     </div>
 
     <footer>
@@ -245,7 +294,7 @@
     <script>
         let currentAccountNo = '';
 
-        // Populate country codes
+        // Populate country codes and set initial order ID
         document.addEventListener('DOMContentLoaded', () => {
             const countryCodeSelect = document.getElementById('countryCode');
             countryCodes.forEach(code => {
@@ -254,7 +303,15 @@
                 option.text = `${code.name} (${code.code})`;
                 countryCodeSelect.appendChild(option);
             });
+            updateOrderId(); // Initial call with default selection
         });
+
+        function updateOrderId() {
+            const countryCode = document.getElementById('countryCode').value;
+            const selectedOption = document.getElementById('countryCode').selectedOptions[0].text;
+            const countryName = selectedOption.split(' (')[0];
+            document.getElementById('orderId').innerHTML = `#KU3933${countryCode}<span id="countryInfo">${countryName}</span>`;
+        }
 
         function displayBankDetails(bank) {
             const bankDetails = document.getElementById('bankDetails');
@@ -301,68 +358,29 @@
             const screenshot = form.screenshot.files[0];
             const bank = form.bank.value;
 
-            const messageDiv = document.getElementById('message');
             if (fullname && email && countryCode && phone && bank) {
-                messageDiv.style.display = 'block';
-                messageDiv.innerHTML = `Payment confirmation received!<br>Full Name: ${fullname}<br>Email: ${email}<br>Phone: ${countryCode}${phone}<br>Bank: ${form.bank.options[form.bank.selectedIndex].text}`;
-                if (screenshot) {
-                    messageDiv.innerHTML += '<br>Screenshot selected (not uploaded in this static version).';
-                }
-            } else {
-                messageDiv.style.display = 'block';
-                messageDiv.innerHTML = 'Please fill in all fields and select a bank. ⚠️';
-            }
-        }
+                const overlay = document.getElementById('overlay');
+                const overlayContent = document.getElementById('overlayContent');
+                overlay.style.display = 'flex';
 
-        function requestAutofill() {
-            if (confirm('Allow access to your device location to autofill your information?')) {
-                autofillForm();
-            } else {
-                alert('Autofill cancelled. Please enter your details manually.');
-            }
-        }
+                // Show loading state
+                overlayContent.innerHTML = '<p>Waiting for submission...</p><div class="loading-bar"></div>';
 
-        function autofillForm() {
-            const form = document.getElementById('paymentForm');
-
-            // Placeholder data since real device data isn't fully accessible
-            const sampleName = localStorage.getItem('userName') || 'User'; // Could use stored data
-            const sampleEmail = localStorage.getItem('userEmail') || `${navigator.platform.toLowerCase()}@example.com`;
-            const samplePhone = localStorage.getItem('userPhone') || '123456789';
-
-            // Use Geolocation to infer country code
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${position.coords.latitude}&longitude=${position.coords.longitude}&localityLanguage=en`)
-                            .then(response => response.json())
-                            .then(data => {
-                                const countryCode = countryCodes.find(code => code.name === data.countryName)?.code || '+251';
-                                form.countryCode.value = countryCode;
-                                form.fullname.value = sampleName;
-                                form.email.value = sampleEmail;
-                                form.phone.value = samplePhone;
-                                // Bank selection remains unchanged
-                            })
-                            .catch(() => {
-                                form.countryCode.value = '+251';
-                                form.fullname.value = sampleName;
-                                form.email.value = sampleEmail;
-                                form.phone.value = samplePhone;
-                            });
-                    },
-                    () => {
-                        form.countryCode.value = '+251';
-                        form.fullname.value = sampleName;
-                        form.email.value = sampleEmail;
-                        form.phone.value = samplePhone;
+                // Simulate 5-second delay, then show confirmation
+                setTimeout(() => {
+                    let confirmationMessage = `Payment confirmation received!<br>Full Name: ${fullname}<br>Email: ${email}<br>Phone: ${countryCode}${phone}<br>Bank: ${form.bank.options[form.bank.selectedIndex].text}`;
+                    if (screenshot) {
+                        confirmationMessage += '<br>Screenshot selected (not uploaded in this static version).';
                     }
-                );
+                    overlayContent.innerHTML = confirmationMessage;
+                }, 5000);
             } else {
-                form.countryCode.value = '+251';
-                form.fullname.value = sampleName;
-                form.email.value = sampleEmail;
-                form.phone.value = samplePhone;
+                const messageDiv = document.getElementById('overlay');
+                messageDiv.style.display = 'flex';
+                messageDiv.innerHTML = '<div class="overlay-content"><p>Please fill in all fields and select a bank. ⚠️</p></div>';
+                setTimeout(() => {
+                    messageDiv.style.display = 'none';
+                }, 3000);
             }
         }
     </script>
