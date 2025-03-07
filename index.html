@@ -18,18 +18,18 @@
         header {
             position: fixed;
             top: 0;
-            left: 0; /* Ensure it starts from the left edge */
-            width: 100%; /* Full width of the viewport */
+            left: 0;
+            width: 100%;
             background: linear-gradient(90deg, #2c3e50, #4a6076);
             color: white;
-            padding: 15px 0; /* Vertical padding only, horizontal padding removed */
+            padding: 15px 0;
             text-align: center;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
             z-index: 10;
             display: flex;
             justify-content: center;
             align-items: center;
-            border-bottom: 2px solid rgba(255, 255, 255, 0.1); /* Subtle border */
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
         }
         header h2 {
             margin: 0;
@@ -38,35 +38,37 @@
             letter-spacing: 1px;
         }
         .container {
-            max-width: 600px;
-            margin: 80px auto 20px; /* Adjusted for header height */
-            padding: 20px;
+            max-width: 450px; /* 25% decrease from 600px */
+            margin: 60px auto 15px; /* Adjusted proportionally */
+            padding: 15px; /* 25% decrease from 20px */
             background: white;
-            border-radius: 15px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border-radius: 11px; /* 25% decrease from 15px */
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1); /* Adjusted */
             animation: fadeIn 0.5s ease-in;
         }
         h1 {
             color: #2c3e50;
             text-align: center;
-            margin: 0 0 20px;
+            margin: 0 0 15px; /* 25% decrease from 20px */
+            font-size: 18px; /* Adjusted proportionally */
         }
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 15px; /* 25% decrease from 20px */
         }
         label {
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 4px; /* 25% decrease from 5px */
             font-weight: 600;
             color: #34495e;
+            font-size: 12px; /* Adjusted */
         }
         input[type="text"], input[type="email"], select, input[type="tel"] {
             width: 100%;
-            padding: 12px;
+            padding: 9px; /* 25% decrease from 12px */
             border: 1px solid #ddd;
-            border-radius: 8px;
+            border-radius: 6px; /* 25% decrease from 8px */
             box-sizing: border-box;
-            font-size: 16px;
+            font-size: 12px; /* 25% decrease from 16px */
             transition: border-color 0.3s;
         }
         input:focus, select:focus {
@@ -75,7 +77,7 @@
         }
         .phone-group {
             display: flex;
-            gap: 10px;
+            gap: 8px; /* 25% decrease from 10px */
         }
         .phone-group select {
             width: 30%;
@@ -85,70 +87,76 @@
         }
         .bank-details {
             background: #f9f9f9;
-            padding: 15px;
-            margin-top: 10px;
-            border-radius: 8px;
+            padding: 11px; /* 25% decrease from 15px */
+            margin-top: 8px; /* 25% decrease from 10px */
+            border-radius: 6px;
             border: 1px solid #eee;
             display: none;
             animation: slideIn 0.3s ease;
+            font-size: 12px;
         }
         .copy-btn {
-            padding: 8px 15px;
+            padding: 6px 11px; /* 25% decrease from 8px 15px */
             background: #3498db;
             color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: 6px;
             cursor: pointer;
             transition: transform 0.2s, background 0.3s;
+            font-size: 12px;
         }
         .copy-btn:hover {
             background: #2980b9;
             transform: scale(1.05);
         }
-        .upload-btn {
+        .upload-btn, .autofill-btn {
             width: 100%;
-            padding: 12px;
+            padding: 9px; /* 25% decrease from 12px */
             background: #27ae60;
             color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: 6px;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 12px; /* 25% decrease from 16px */
             transition: transform 0.2s, background 0.3s;
+            margin-top: 8px; /* 25% decrease from 10px */
+        }
+        .autofill-btn {
+            background: #8e44ad;
         }
         .upload-btn:hover {
             background: #219653;
             transform: scale(1.02);
         }
+        .autofill-btn:hover {
+            background: #732d91;
+            transform: scale(1.02);
+        }
         .message {
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 8px;
+            margin-top: 15px; /* 25% decrease from 20px */
+            padding: 11px; /* 25% decrease from 15px */
+            border-radius: 6px;
             background: #ecf0f1;
             display: none;
             animation: fadeIn 0.5s ease;
+            font-size: 12px;
         }
         footer {
             margin-top: auto;
-            padding: 20px;
+            padding: 15px; /* 25% decrease from 20px */
             text-align: center;
             background: #fff;
             border-top: 1px solid #ddd;
-            border-radius: 0 0 15px 15px;
-            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 0 0 11px 11px;
+            box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+            font-size: 12px;
         }
-        .support-btn {
-            padding: 10px 20px;
-            background: #e67e22;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: transform 0.2s, background 0.3s;
+        footer a {
+            color: #e67e22;
+            text-decoration: none;
         }
-        .support-btn:hover {
-            background: #d35400;
-            transform: scale(1.05);
+        footer a:hover {
+            text-decoration: underline;
         }
         @keyframes fadeIn {
             from { opacity: 0; }
@@ -159,9 +167,15 @@
             to { transform: translateY(0); opacity: 1; }
         }
         @media (max-width: 600px) {
+            header {
+                padding: 10px 0; /* Smaller padding on mobile */
+            }
+            header h2 {
+                font-size: 18px; /* Smaller font on mobile */
+            }
             .container {
-                margin: 70px 10px 10px;
-                border-radius: 10px;
+                margin: 50px 8px 8px; /* Adjusted for smaller header */
+                border-radius: 8px;
             }
             footer {
                 border-radius: 0;
@@ -217,13 +231,14 @@
             </div>
 
             <button type="submit" class="upload-btn">Submit Confirmation ✅</button>
+            <button type="button" class="autofill-btn" onclick="autofillForm()">Autofill ✨</button>
         </form>
 
         <div id="message" class="message"></div>
     </div>
 
     <footer>
-        <button class="support-btn" onclick="alert('Contact us at support@example.com or call +251-XXX-XXX-XXXX')">Customer Support ☎️</button>
+        <p><a href="mailto:support@example.com">Customer Support ☎️</a></p>
     </footer>
 
     <script src="countryCodes.js"></script>
@@ -297,6 +312,16 @@
                 messageDiv.style.display = 'block';
                 messageDiv.innerHTML = 'Please fill in all fields and select a bank. ⚠️';
             }
+        }
+
+        function autofillForm() {
+            const form = document.getElementById('paymentForm');
+            form.fullname.value = 'John Doe';
+            form.email.value = 'john.doe@example.com';
+            form.countryCode.value = '+251';
+            form.phone.value = '912345678';
+            form.bank.value = 'cbe';
+            displayBankDetails('cbe');
         }
     </script>
 </body>
