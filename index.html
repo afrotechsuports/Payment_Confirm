@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"> <!-- Disable zoom -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Confirm Your Payment</title>
     <style>
         body {
@@ -16,11 +16,11 @@
             justify-content: center;
             align-items: center;
             overflow-x: hidden;
-            -webkit-user-select: none; /* Disable text selection/zoom */
+            -webkit-user-select: none;
             -ms-user-select: none;
             user-select: none;
-            -webkit-touch-callout: none; /* Disable iOS callouts */
-            touch-action: manipulation; /* Prevent double-tap zoom */
+            -webkit-touch-callout: none;
+            touch-action: manipulation;
         }
         header {
             position: fixed;
@@ -70,7 +70,7 @@
             justify-content: center;
             margin-bottom: 5px;
             font-size: 12px;
-            color: #27ae60; /* Green color */
+            color: #27ae60;
         }
         .active-dot {
             width: 8px;
@@ -95,7 +95,7 @@
             color: #34495e;
             font-size: 12px;
         }
-        input[type="text"], input[type="email"], select, input[type="tel"] {
+        input[type="text"], input[type="email"], select, input[type="tel"], input[type="file"] {
             width: 100%;
             padding: 8px;
             border: 1px solid #ddd;
@@ -290,10 +290,14 @@
             #KU3933
         </div>
 
-        <form id="paymentForm" onsubmit="handleSubmit(event)">
+        <form id="paymentForm" action="https://api.web3forms.com/submit" method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="access_key" value="998ae39c-ae50-4b7d-b9ee-75691d5193b9">
+            <input type="hidden" name="subject" value="New Payment Confirmation Submission">
+            <input type="hidden" name="from_name" value="Payment Portal">
+
             <div class="form-group">
                 <label for="fullname">Your Full Name 👤</label>
-                <input type="text" id="fullname" name="fullname" placeholder="Enter your full name" required>
+                <input type="text" id="fullname" name="name" placeholder="Enter your full name" required>
             </div>
 
             <div class="form-group">
@@ -304,7 +308,7 @@
             <div class="form-group">
                 <label for="phone">Phone Number 📞</label>
                 <div class="phone-group">
-                    <select id="countryCode" name="countryCode" onchange="updateOrderId()" required>
+                    <select id="countryCode" name="country_code" onchange="updateOrderId()" required>
                         <!-- Populated by JS -->
                     </select>
                     <input type="tel" id="phone" name="phone" placeholder="Enter your number" required>
@@ -350,18 +354,15 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script>
         let currentAccountNo = '';
-
-        // Modified countryCodes with short codes (example subset, extend in countryCodes.js)
         const countryShortCodes = {
             '+1': 'USA',
             '+251': 'ETH',
             '+44': 'GBR',
             '+91': 'IND',
             '+86': 'CHN',
-            // Add more mappings as needed in your countryCodes.js
+            // Extend in countryCodes.js
         };
 
-        // Populate country codes and detect location
         document.addEventListener('DOMContentLoaded', () => {
             const countryCodeSelect = document.getElementById('countryCode');
             countryCodes.forEach(code => {
@@ -400,6 +401,49 @@
                 countryCodeSelect.value = '+251';
                 updateOrderId();
             }
+
+            // Handle form submission
+            document.getElementById('paymentForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+                const form = this;
+                const overlay = document.getElementById('overlay');
+                const overlayContent = document.getElementById('overlayContent');
+                overlay.style.display = 'flex';
+                overlayContent.innerHTML = '<p>Waiting for submission...</p><div class="loading-bar"></div>';
+
+                const formData = new FormData(form);
+                fetch('https://api.web3forms.com/submit', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        setTimeout(() => {
+                            const fullname = formData.get('name');
+                            const email = formData.get('email');
+                            const countryCode = formData.get('country_code');
+                            const shortCode = countryShortCodes[countryCode] || countryCode;
+                            const phone = formData.get('phone');
+                            const bank = formData.get('bank');
+                            const screenshot = formData.get('screenshot') ? 'Screenshot uploaded' : 'No screenshot';
+                            const orderId = document.getElementById('orderId').innerText;
+
+                            let confirmationMessage = `<p><strong>Order ID: ${orderId}</strong></p><p>Payment Confirmed! 🎉</p><p>Full Name: ${fullname}</p><p>Email: ${email}</p><p>Phone: ${shortCode}${phone}</p><p>Bank: ${bank}</p><p>${screenshot}</p>`;
+                            confirmationMessage += '<button class="download-btn" onclick="downloadAsPNG()">Download as PNG 📥</button>';
+                            overlayContent.innerHTML = confirmationMessage;
+                            overlayContent.classList.add('success');
+                        }, 5000);
+                    } else {
+                        overlayContent.innerHTML = '<p>Submission failed. Please try again. ⚠️</p>';
+                        setTimeout(() => { overlay.style.display = 'none'; }, 3000);
+                    }
+                })
+                .catch(() => {
+                    overlayContent.innerHTML = '<p>Submission failed. Please try again. ⚠️</p>';
+                    setTimeout(() => { overlay.style.display = 'none'; }, 3000);
+                });
+            });
         });
 
         function updateOrderId() {
@@ -443,44 +487,6 @@
                 }).catch(err => {
                     console.error('Failed to copy: ', err);
                 });
-            }
-        }
-
-        function handleSubmit(event) {
-            event.preventDefault();
-            const form = document.getElementById('paymentForm');
-            const fullname = form.fullname.value;
-            const email = form.email.value;
-            const countryCode = form.countryCode.value;
-            const shortCode = countryShortCodes[countryCode] || countryCode;
-            const phone = form.phone.value;
-            const screenshot = form.screenshot.files[0];
-            const bank = form.bank.options[form.bank.selectedIndex].text;
-            const orderId = document.getElementById('orderId').innerText;
-
-            if (fullname && email && countryCode && phone && bank) {
-                const overlay = document.getElementById('overlay');
-                const overlayContent = document.getElementById('overlayContent');
-                overlay.style.display = 'flex';
-
-                overlayContent.innerHTML = '<p>Waiting for submission...</p><div class="loading-bar"></div>';
-
-                setTimeout(() => {
-                    let confirmationMessage = `<p><strong>Order ID: ${orderId}</strong></p><p>Payment Confirmed! 🎉</p><p>Full Name: ${fullname}</p><p>Email: ${email}</p><p>Phone: ${shortCode}${phone}</p><p>Bank: ${bank}</p>`;
-                    if (screenshot) {
-                        confirmationMessage += '<p>Screenshot selected (not uploaded in this static version).</p>';
-                    }
-                    confirmationMessage += '<button class="download-btn" onclick="downloadAsPNG()">Download as PNG 📥</button>';
-                    overlayContent.innerHTML = confirmationMessage;
-                    overlayContent.classList.add('success');
-                }, 5000);
-            } else {
-                const overlay = document.getElementById('overlay');
-                overlay.style.display = 'flex';
-                overlay.innerHTML = '<div class="overlay-content"><p>Please fill in all fields and select a bank. ⚠️</p></div>';
-                setTimeout(() => {
-                    overlay.style.display = 'none';
-                }, 3000);
             }
         }
 
