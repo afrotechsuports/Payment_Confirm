@@ -13,8 +13,8 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            justify-content: center; /* Center vertically */
-            align-items: center; /* Center horizontally */
+            justify-content: center;
+            align-items: center;
             overflow-x: hidden;
         }
         header {
@@ -24,7 +24,7 @@
             width: 100%;
             background: linear-gradient(90deg, #2c3e50, #4a6076);
             color: white;
-            padding: 10px 0; /* Reduced for phone-friendliness */
+            padding: 10px 0;
             text-align: center;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
             z-index: 10;
@@ -32,17 +32,17 @@
         }
         header h2 {
             margin: 0;
-            font-size: 20px; /* Adjusted for phones */
+            font-size: 20px;
             font-weight: 600;
             letter-spacing: 1px;
         }
         .container {
-            width: 90%; /* More flexible width */
-            max-width: 337px; /* Kept for consistency */
-            margin: 60px 0 15px; /* Adjusted margin */
+            width: 90%;
+            max-width: 337px;
+            margin: 60px 0 15px;
             padding: 15px;
             background: white;
-            border-radius: 15px; /* Slightly larger for friendliness */
+            border-radius: 15px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
             animation: fadeIn 0.5s ease-in;
         }
@@ -65,7 +65,7 @@
             color: #7f8c8d;
         }
         .form-group {
-            margin-bottom: 12px; /* Slightly reduced */
+            margin-bottom: 12px;
         }
         label {
             display: block;
@@ -76,7 +76,7 @@
         }
         input[type="text"], input[type="email"], select, input[type="tel"] {
             width: 100%;
-            padding: 8px; /* Slightly reduced for compactness */
+            padding: 8px;
             border: 1px solid #ddd;
             border-radius: 6px;
             box-sizing: border-box;
@@ -92,7 +92,7 @@
             gap: 8px;
         }
         .phone-group select {
-            width: 35%; /* Slightly wider for usability */
+            width: 35%;
         }
         .phone-group input {
             width: 65%;
@@ -325,7 +325,7 @@
     <script>
         let currentAccountNo = '';
 
-        // Populate country codes and set initial order ID
+        // Populate country codes and detect location
         document.addEventListener('DOMContentLoaded', () => {
             const countryCodeSelect = document.getElementById('countryCode');
             countryCodes.forEach(code => {
@@ -334,7 +334,37 @@
                 option.text = `${code.name} (${code.code})`;
                 countryCodeSelect.appendChild(option);
             });
-            updateOrderId(); // Initial call with default selection
+
+            // Ask for location permission
+            if (navigator.geolocation) {
+                if (confirm('Allow this page to access your location to pre-select your country code?')) {
+                    navigator.geolocation.getCurrentPosition(
+                        (position) => {
+                            fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${position.coords.latitude}&longitude=${position.coords.longitude}&localityLanguage=en`)
+                                .then(response => response.json())
+                                .then(data => {
+                                    const countryCode = countryCodes.find(code => code.name === data.countryName)?.code || '+251';
+                                    countryCodeSelect.value = countryCode;
+                                    updateOrderId(); // Update Order ID after setting country code
+                                })
+                                .catch(() => {
+                                    countryCodeSelect.value = '+251'; // Fallback
+                                    updateOrderId();
+                                });
+                        },
+                        () => {
+                            countryCodeSelect.value = '+251'; // Fallback on denial/error
+                            updateOrderId();
+                        }
+                    );
+                } else {
+                    countryCodeSelect.value = '+251'; // Default if permission denied
+                    updateOrderId();
+                }
+            } else {
+                countryCodeSelect.value = '+251'; // Default if geolocation not supported
+                updateOrderId();
+            }
         });
 
         function updateOrderId() {
@@ -388,17 +418,15 @@
             const phone = form.phone.value;
             const screenshot = form.screenshot.files[0];
             const bank = form.bank.options[form.bank.selectedIndex].text;
-            const orderId = document.getElementById('orderId').innerText.split('\n')[0]; // Get Order ID without country name
+            const orderId = document.getElementById('orderId').innerText.split('\n')[0];
 
             if (fullname && email && countryCode && phone && bank) {
                 const overlay = document.getElementById('overlay');
                 const overlayContent = document.getElementById('overlayContent');
                 overlay.style.display = 'flex';
 
-                // Show loading state
                 overlayContent.innerHTML = '<p>Waiting for submission...</p><div class="loading-bar"></div>';
 
-                // Simulate 5-second delay, then show confirmation
                 setTimeout(() => {
                     let confirmationMessage = `<p><strong>Order ID: ${orderId}</strong></p><p>Payment Confirmed! 🎉</p><p>Full Name: ${fullname}</p><p>Email: ${email}</p><p>Phone: ${countryCode}${phone}</p><p>Bank: ${bank}</p>`;
                     if (screenshot) {
@@ -406,7 +434,7 @@
                     }
                     confirmationMessage += '<button class="download-btn" onclick="downloadAsPNG()">Download as PNG 📥</button>';
                     overlayContent.innerHTML = confirmationMessage;
-                    overlayContent.classList.add('success'); // Add success styling
+                    overlayContent.classList.add('success');
                 }, 5000);
             } else {
                 const overlay = document.getElementById('overlay');
